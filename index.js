@@ -13,10 +13,9 @@ mongoose
 	.then(() => console.log("DB connection successful!"))
 	.catch((error) => console.log(error));
 
-app.use("/api/user", userRoute);
+app.use(express.json())
+app.use("/api/users", userRoute);
 
 app.listen(process.env.PORT || 5001, () => {
 	console.log("Backend server is running on port 5001");
 });
-
-
