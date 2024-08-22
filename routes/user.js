@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const {
-	verifyToken,
 	verifyTokenAndAuthorization,
 	verifyTokenAndAdmin,
 } = require("./verifyToken");
@@ -41,10 +40,10 @@ router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
 
 // Get User
 router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
-  try {
+	try {
 		const user = await User.findById(req.params.id);
 		const { password, ...others } = user._doc;
-		res.status(200).json({...others});
+		res.status(200).json({ ...others });
 	} catch (error) {
 		res.status(500).json(error);
 	}
@@ -65,28 +64,28 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 
 // Get User Stats
 router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
-  const date = new Date();
-  const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
+	const date = new Date();
+	const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
 
-  try {
-    const data = await User.aggregate([
-      { $match: { createdAt: { $gte: lastYear } } },
-      {
-        $project: {
-          month: { $month: "$createdAt" },
-        },
-      },
-      {
-        $group: {
-          _id: "$month",
-          total: { $sum: 1 },
-        },
-      },
-    ]);
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json(err);
-  }
+	try {
+		const data = await User.aggregate([
+			{ $match: { createdAt: { $gte: lastYear } } },
+			{
+				$project: {
+					month: { $month: "$createdAt" },
+				},
+			},
+			{
+				$group: {
+					_id: "$month",
+					total: { $sum: 1 },
+				},
+			},
+		]);
+		res.status(200).json(data);
+	} catch (err) {
+		res.status(500).json(err);
+	}
 });
 
 module.exports = router;
